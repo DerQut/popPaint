@@ -22,6 +22,8 @@ def main():
 
     start_pos = (0, 0)
 
+    colour = (0, 0, 0)
+
     pixels.generate_pixels(paint_surface, (255, 255, 255), 1280, 720, 10, 10)
 
     lines = []
@@ -52,19 +54,30 @@ def main():
                     clicking = False
                     drawing_line = False
                     if controlling:
-                        lines.append((start_pos, mouse_pos))
+                        lines.append((start_pos, mouse_pos, colour))
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL:
                     controlling = not controlling
+                    print(f"Drawing straight lines: {controlling}")
+                elif event.key == pygame.K_LALT:
+                    if colour == (0, 0, 0):
+                        colour = (255, 255, 255)
+                    else:
+                        colour = (0, 0, 0)
+                    print(f"Colour: {colour}")
+
+                elif event.key == pygame.K_F9:
+                    if len(lines):
+                        lines.pop()
 
         if clicking and not controlling:
-            paint.Pixel.scan_paint((mouse_pos[0]-surface_cords[0], mouse_pos[1]-surface_cords[1]), (0, 0, 0))
+            paint.Pixel.scan_paint((mouse_pos[0]-surface_cords[0], mouse_pos[1]-surface_cords[1]), colour)
         elif clicking and controlling and drawing_line:
-            pygame.draw.line(paint_surface, (0, 0, 0), start_pos, mouse_pos, 10)
+            pygame.draw.line(paint_surface, (255, 128, 128), start_pos, mouse_pos, 10)
 
         for line in lines:
-            pygame.draw.line(paint_surface, (0, 0, 0), line[0], line[1], 10)
+            pygame.draw.line(paint_surface, line[2], line[0], line[1], 10)
 
         screen.blit(paint_surface, surface_cords)
 
