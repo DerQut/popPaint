@@ -14,14 +14,24 @@ def main():
 
     running = True
     clicking = False
+    controlling = False
+
+    drawing_line = False
 
     clock = pygame.time.Clock()
 
+    start_pos = (0, 0)
+
     pixels.generate_pixels(paint_surface, (255, 255, 255), 1280, 720, 10, 10)
+
+    lines = []
 
     while running:
 
         screen.fill((128, 128, 128))
+
+        paint_surface.fill((255, 255, 255))
+        paint.Pixel.draw_all()
 
         mouse_pos = pygame.mouse.get_pos()
 
@@ -33,15 +43,29 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     clicking = True
+                    if controlling:
+                        start_pos = mouse_pos
+                        drawing_line = True
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     clicking = False
+                    drawing_line = False
+                    if controlling:
+                        lines.append((start_pos, mouse_pos))
 
-        if clicking:
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LCTRL:
+                    controlling = not controlling
+
+        if clicking and not controlling:
             paint.Pixel.scan_paint((mouse_pos[0]-surface_cords[0], mouse_pos[1]-surface_cords[1]), (0, 0, 0))
+        elif clicking and controlling and drawing_line:
+            pygame.draw.line(paint_surface, (0, 0, 0), start_pos, mouse_pos, 10)
 
-        paint_surface.fill((255, 255, 255))
-        paint.Pixel.draw_all()
+        for line in lines:
+            pygame.draw.line(paint_surface, (0, 0, 0), line[0], line[1], 10)
+
         screen.blit(paint_surface, surface_cords)
 
         pygame.display.flip()
