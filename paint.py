@@ -36,20 +36,33 @@ class Pixel:
 
         self.rect = pygame.rect.Rect(self.x_pos, self.y_pos, self.x_size, self.y_size)
 
-    def draw(self):
-        pygame.draw.rect(self.surface, self.colour, self.rect)
+    def draw(self, colour):
+        pygame.draw.rect(self.surface, colour, self.rect)
 
     @classmethod
     def draw_all(cls):
         for pixel in cls.all_pixels:
-            pixel.draw()
+            pixel.draw(pixel.colour)
 
     @classmethod
-    def scan_paint(cls, mouse_pos, colour):
+    def mouse_scan(cls, mouse_pos):
         for pixel in cls.all_pixels:
             if not pixel.x_pos+pixel.x_size > mouse_pos[0] >= pixel.x_pos:
                 continue
 
             if pixel.y_pos+pixel.y_size > mouse_pos[1] >= pixel.y_pos:
-                pixel.change_colour(colour)
-                break
+                return pixel
+        return False
+
+    @classmethod
+    def scan_paint(cls, mouse_pos, colour):
+        pixel = cls.mouse_scan(mouse_pos)
+        if pixel:
+            pixel.change_colour(colour)
+
+
+    @classmethod
+    def cursor_highlight(cls, mouse_pos, colour):
+        pixel = cls.mouse_scan(mouse_pos)
+        if pixel:
+            pixel.draw(colour)

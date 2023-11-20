@@ -23,6 +23,7 @@ def main():
     start_pos = (0, 0)
 
     colour = (0, 0, 0)
+    highlight_colour = (128, 128, 128)
 
     pixels.generate_pixels(paint_surface, (255, 255, 255), 1280, 720, 10, 10)
 
@@ -59,7 +60,12 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL:
                     controlling = not controlling
-                    print(f"Drawing straight lines: {controlling}")
+
+                    if controlling:
+                        highlight_colour = (255, 200, 200)
+                    else:
+                        highlight_colour = (128, 128, 128)
+
                 elif event.key == pygame.K_LALT:
                     if colour == (0, 0, 0):
                         colour = (255, 255, 255)
@@ -78,6 +84,8 @@ def main():
 
         for line in lines:
             pygame.draw.line(paint_surface, line[2], line[0], line[1], 10)
+
+        paint.Pixel.cursor_highlight(mouse_pos, highlight_colour)
 
         screen.blit(paint_surface, surface_cords)
 
