@@ -30,7 +30,7 @@ class Pixel:
 
         self.rect = pygame.rect.Rect(self.x_pos, self.y_pos, self.x_size, self.y_size)
 
-    def change_sizeI(self, new_x_size, new_y_size):
+    def change_size(self, new_x_size, new_y_size):
         self.x_size = new_x_size
         self.y_size = new_y_size
 
